@@ -1,6 +1,9 @@
 from senticnet.senticnet import SenticNet
 import pandas as pd
 import nltk
+import numpy as np
+import re
+import string
 
 # testing the SenticNet python package
 sn = SenticNet()
@@ -27,5 +30,14 @@ comments = reviews["learner_comment"]
 for x in range(5):
     print(comments[x])
 
-comment1 = nltk.word_tokenize(comments[0])
-print('First comment tokenized:', comment1)
+
+# tokenize the comments
+comments.fillna("", inplace=True)
+print(comments.tolist()[:4])
+tokens = comments.apply(nltk.word_tokenize)
+comment0 = nltk.word_tokenize(comments[0])
+print('First comment tokenized:', comment0)
+print(tokens[:10])
+
+# need to clean the comments
+# words = [word for word in tokens if word.isalpha()]
