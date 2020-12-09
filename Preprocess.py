@@ -17,27 +17,23 @@ sentics = sn.sentics('love')
 print("Hello COLESEAN!", concept_info, polarity_label, polarity_value, moodtags, semantics, sentics)
 
 # reading csv file to access reviews
-print('Loading entire comments set')
-reviews = pd.read_csv('udemy_evaluate_latest.csv')
+print('Loading entire comments set:')
+# index column of the csv-file seems to contain a string?
+reviews = pd.read_csv('udemy_evaluate_latest.csv', dtype={0: "string"})
 print('Found', len(reviews.index), 'comments')
-
-# for x in range(5):
-#    print(reviews.values[x])
 
 comments = reviews["learner_comment"]
 
-# take a look at the first 10 comments
-for x in range(5):
+# take a look at some comments
+for x in range(1):
     print(comments[x])
 
 
 # tokenize the comments
 comments.fillna("", inplace=True)
-print(comments.tolist()[:4])
 tokens = comments.apply(nltk.word_tokenize)
-comment0 = nltk.word_tokenize(comments[0])
-print('First comment tokenized:', comment0)
+# take a look at some tokenized comments
 print(tokens[:10])
 
-# need to clean the comments
+# need to clean the comments, maybe use keras.preprocessing instead of nltk?
 # words = [word for word in tokens if word.isalpha()]
