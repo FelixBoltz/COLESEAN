@@ -1,5 +1,7 @@
 import pandas as pd
 import random
+import numpy as np
+from keras.preprocessing.sequence import pad_sequences
 
 reviews_file = 'comments_with_ratings.csv'
 
@@ -65,3 +67,9 @@ def even_out_distribution(ratings):
     random.shuffle(even_distribution)
     print("Entries in evened out distribution:", len(even_distribution))
     return even_distribution
+
+
+def get_we_sequences(tokenizer, sentences, max_len_we):
+    sequences = tokenizer.texts_to_sequences(sentences)
+    padded_sequences = pad_sequences(sequences, padding='post', maxlen=max_len_we)
+    return np.array(padded_sequences, dtype=object)
