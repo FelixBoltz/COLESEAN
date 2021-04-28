@@ -1,6 +1,8 @@
-import Regressor
+import Preprocessing
 
-input_data = 0
+# input variables
+comments = []
+ratings = []
 # Word Embedding variable, possible values: 'GloVe', 'W2V' and 'FastText'
 word_embedding = 'GloVe'
 # SenticNet variable, possible values: 'concept_vector', 'polarity_vector' and 'polarity_score'
@@ -10,8 +12,8 @@ model_type = 0
 
 
 def main():
-    regressor = Regressor.Regressor(word_embedding, sentic_net, model_type)
-    regressor.train(input_data)
+    Preprocessing.get_reviews(comments, ratings)
+    return 0
 
 
 if __name__ == "__main__":
