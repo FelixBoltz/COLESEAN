@@ -1,8 +1,5 @@
 import Preprocessing
 
-# input variables
-comments = []
-ratings = []
 # Word Embedding variable, possible values: 'GloVe', 'W2V' and 'FastText'
 word_embedding = 'GloVe'
 # SenticNet variable, possible values: 'concept_vector', 'polarity_vector' and 'polarity_score'
@@ -12,7 +9,19 @@ model_type = 0
 
 
 def main():
-    Preprocessing.get_reviews(comments, ratings)
+    # input variables
+    reviews = Preprocessing.get_reviews()
+    comments = reviews.iloc[:, 1]
+    ratings = reviews.iloc[:, 2]
+    # even out the distribution
+    even_distribution = Preprocessing.even_out_distribution(ratings)
+    even_ratings = []
+    even_comments = []
+    for i in range(len(even_distribution)):
+        even_ratings.append(ratings[even_distribution[i]])
+        even_comments.append(comments[even_distribution[i]])
+    # print("Ratings length:", len(even_ratings))
+    # print("Comments length:", len(even_comments))
     return 0
 
 
