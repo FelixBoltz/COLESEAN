@@ -1,4 +1,5 @@
 import Preprocessing
+from sklearn.model_selection import train_test_split
 
 # Word Embedding variable, possible values: 'GloVe', 'W2V' and 'FastText'
 word_embedding = 'GloVe'
@@ -22,6 +23,14 @@ def main():
         even_comments.append(comments[even_distribution[i]])
     # print("Ratings length:", len(even_ratings))
     # print("Comments length:", len(even_comments))
+
+    # split data into 70% training, 10% validation and 20% test
+    sentences_train_val, sentences_test, y_train_val, y_test = train_test_split(even_comments, even_ratings,
+                                                                                train_size=0.8, test_size=0.2,
+                                                                                random_state=1000)
+    sentences_train, sentences_val, y_train, y_val = train_test_split(sentences_train_val, y_train_val,
+                                                                      train_size=0.875, test_size=0.125,
+                                                                      random_state=1000)
     return 0
 
 
