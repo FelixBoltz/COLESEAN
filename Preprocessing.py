@@ -76,7 +76,7 @@ def get_we_sequences(tokenizer, sentences, max_len_we):
     return np.array(padded_sequences, dtype=object)
 
 
-def create_index(file):
+def create_as_index(file):
     token2concepts = {}
     with open(file, 'r') as f:
         for line in f:
@@ -86,6 +86,21 @@ def create_index(file):
                 if token not in token2concepts:
                     token2concepts[token] = set()
                 token2concepts[token].add(concept)
+
+    a_file = open("token2concepts.pkl", "wb")
+    pickle.dump(token2concepts, a_file)
+    a_file.close()
+
+
+def create_sn_index(dictionary):
+    token2concepts = {}
+    for i in range(len(dictionary)):
+        concept = list(dictionary.keys())[i]
+        tokens = concept.split('_')
+        for token in tokens:
+            if token not in token2concepts:
+                token2concepts[token] = set()
+            token2concepts[token].add(concept)
 
     a_file = open("token2concepts.pkl", "wb")
     pickle.dump(token2concepts, a_file)
