@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import pickle
+import nltk
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 
@@ -105,3 +106,29 @@ def create_sn_index(dictionary):
     a_file = open("token2concepts.pkl", "wb")
     pickle.dump(token2concepts, a_file)
     a_file.close()
+
+
+class SearchObject:
+
+    def __init__(self):
+        a_file = open("token2concepts.pkl", "rb")
+        self.token2concepts = pickle.load(a_file)
+        a_file.close()
+
+    def search(self, text):
+        text = text.lower()
+        tokens = nltk.word_tokenize(text)
+
+        found_concepts = []
+        for t in tokens:
+            if t in self.token2concepts:
+                potential_concepts = sorted(self.token2concepts[t], key=len, reverse=True)
+                for concept in potential_concepts:
+                    if concept.replace('_', ' ') in text:
+                        if not found_concepts:
+                            found_concepts += [concept]
+                        # if subsequent tokens activate the same concept, it must not be saved
+                        elif found_concepts[-1] != concept:
+                            found_concepts += [concept]
+                        break
+        return found_concepts
