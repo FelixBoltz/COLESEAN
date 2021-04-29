@@ -1,5 +1,6 @@
 import pandas as pd
 import random
+import pickle
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 
@@ -73,3 +74,19 @@ def get_we_sequences(tokenizer, sentences, max_len_we):
     sequences = tokenizer.texts_to_sequences(sentences)
     padded_sequences = pad_sequences(sequences, padding='post', maxlen=max_len_we)
     return np.array(padded_sequences, dtype=object)
+
+
+def create_index(file):
+    token2concepts = {}
+    with open(file, 'r') as f:
+        for line in f:
+            concept = line.split(',')[0]
+            tokens = concept.split('_')
+            for token in tokens:
+                if token not in token2concepts:
+                    token2concepts[token] = set()
+                token2concepts[token].add(concept)
+
+    a_file = open("token2concepts.pkl", "wb")
+    pickle.dump(token2concepts, a_file)
+    a_file.close()

@@ -32,9 +32,9 @@ def main():
     sentences_train, sentences_val, y_train, y_val = train_test_split(sentences_train_val, y_train_val,
                                                                       train_size=0.875, test_size=0.125,
                                                                       random_state=1000)
-    # set maximal sequence length for word embedding branch
+    # set maximal sequence length for word embedding branch input
     max_len_we = 100
-    # get padded token sequences for word embedding branch
+    # get padded token sequences for word embedding branch input
     tokenizer_we = Tokenizer()
     tokenizer_we.fit_on_texts(comments)
     vocab_size_we = len(tokenizer_we.word_index) + 1
