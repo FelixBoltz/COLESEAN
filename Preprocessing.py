@@ -77,6 +77,20 @@ def get_we_sequences(tokenizer, sentences, max_len_we):
     return np.array(padded_sequences, dtype=object)
 
 
+def get_as_sequences(tokenizer, sentences, max_len_as, so):
+    sequences = []
+    for i in range(len(sentences)):
+        # for i in range(10000):
+        sequence = []
+        concepts = so.search(sentences[i])
+        for concept in concepts:
+            sequence.append(tokenizer.word_index[concept])
+        sequences.append(sequence)
+
+    padded_sequences = pad_sequences(sequences, padding='post', maxlen=max_len_as)
+    return np.array(padded_sequences, dtype=object)
+
+
 def create_as_index(file):
     token2concepts = {}
     with open(file, 'r') as f:
@@ -114,6 +128,7 @@ class SearchObject:
         a_file = open("token2concepts.pkl", "rb")
         self.token2concepts = pickle.load(a_file)
         a_file.close()
+        nltk.download('punkt')
 
     def search(self, text):
         text = text.lower()
