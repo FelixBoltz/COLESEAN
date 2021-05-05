@@ -1,20 +1,22 @@
 import Preprocessing
+import Regressor
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
 from senticnet.senticnet import SenticNet
 import pandas as pd
 import matplotlib.pyplot as plt
+from gensim.models import KeyedVectors
 
-# Word Embedding variable, possible values: 'GloVe', 'W2V' and 'FastText'
-import Regressor
-
-word_embedding = 'GloVe'
-# SenticNet variable, possible values: 'concept_vector', 'polarity_vector' and 'polarity_score'
-sentic_net = 'concept_vector'
+# Word Embedding variable, possible values: 0 (Global Vectors), 1 (Word2Vec) and 2 (FastText)
+word_embedding_type = 1
 # model type, possible values: 0 (concept vector model), 1 (polarity vector model) and 2 (polarity score model)
 model_type = 0
 # GloVe vectors location
 glove_path = 'glove.6B.300d.txt'
+# FastText vectors location
+fasttext_path = 'crawl-300d-2M.vec'
+# Word2vec vectors location
+word2vec_path = 'GoogleNews-vectors-negative300.bin.gz'
 # AffectiveSpace vectors location
 affectivespace_path = 'affectivespace.csv'
 # loss function: either mse or mae
@@ -57,10 +59,7 @@ def main():
     x_test_we_pad = Preprocessing.get_we_sequences(tokenizer_we, sentences_test, max_len_we)
     # set up embedding matrix for word embedding input
     embedding_dim_we = 300
-    embedding_matrix_we = []
-    if word_embedding == 'GloVe':
-        embedding_matrix_we = Preprocessing.create_embedding_matrix_glove(glove_path,
-                                                                          tokenizer_we.word_index, embedding_dim_we)
+    embedding_matrix_we = get_embedding_matrix_we(word_embedding_type, tokenizer_we, embedding_dim_we)
     # prepare SenticNet related input depending on model
     so = Preprocessing.SearchObject()
     if model_type == 0:
@@ -121,6 +120,17 @@ def plot_history(history):
     plt.plot(x, val_loss, 'r', label='Validation loss')
     plt.title('Training and validation loss')
     plt.legend()
+
+
+def get_embedding_matrix_we(we_type, tokenizer_we, embedding_dim_we):
+    if we_type == 0:
+        return Preprocessing.create_embedding_matrix_glove(glove_path, tokenizer_we.word_index, embedding_dim_we)
+    elif we_type == 1:
+        word2vec = KeyedVectors.load_word2vec_format(word2vec_path, binary=True)
+        return Preprocessing.create_embedding_matrix_fasttext(word2vec, tokenizer_we.word_index, embedding_dim_we)
+    elif we_type == 2:
+        fasttext = KeyedVectors.load_word2vec_format(fasttext_path)
+        return Preprocessing.create_embedding_matrix_fasttext(fasttext, tokenizer_we.word_index, embedding_dim_we)
 
 
 if __name__ == "__main__":

@@ -164,6 +164,20 @@ def create_embedding_matrix_glove(filepath, word_index, embedding_dim):
     return embedding_matrix
 
 
+def create_embedding_matrix_fasttext(model, word_index, embedding_dim):
+    vocab_size = len(word_index) + 1  # Adding again 1 because of reserved 0 index
+    embedding_matrix = np.zeros((vocab_size, embedding_dim))
+
+    for word, i in word_index.items():
+        try:
+            vector = model[word]
+            embedding_vector = np.array(vector, dtype=np.float32)[:embedding_dim]
+            embedding_matrix[i] = embedding_vector
+        except KeyError:
+            continue
+    return embedding_matrix
+
+
 def create_embedding_matrix_as(filepath, word_index, embedding_dim):
     vocab_size = len(word_index) + 1  # Adding again 1 because of reserved 0 index
     embedding_matrix = np.zeros((vocab_size, embedding_dim))
