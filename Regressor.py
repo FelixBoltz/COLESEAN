@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 from keras.layers import LSTM, Bidirectional
+from keras.callbacks import EarlyStopping
 
 
 def concept_vector_model(max_len_we, max_len_as, vocab_size_we, vocab_size_as,
@@ -25,6 +26,16 @@ def concept_vector_model(max_len_we, max_len_as, vocab_size_we, vocab_size_as,
     model = keras.Model(inputs=[we_input, as_input], outputs=[output], )
     return model
 
+
 # def polarity_vector_model():
 
 # def polarity_score_model():
+
+def print_test_performance(model, y_test, x_test_we_pad, x_test_as_pad):
+    y_true = y_test
+    test_input = [x_test_we_pad, x_test_as_pad]
+    y_pred = model.predict(test_input)
+    mae = tf.keras.losses.MeanAbsoluteError()
+    print("Mean absolute error on test set: ", mae(y_true, y_pred).numpy())
+    mse = tf.keras.losses.MeanSquaredError()
+    print("Mean squared error on test set: ", mse(y_true, y_pred).numpy())

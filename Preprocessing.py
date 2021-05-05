@@ -74,7 +74,7 @@ def even_out_distribution(ratings):
 def get_we_sequences(tokenizer, sentences, max_len_we):
     sequences = tokenizer.texts_to_sequences(sentences)
     padded_sequences = pad_sequences(sequences, padding='post', maxlen=max_len_we)
-    return np.array(padded_sequences, dtype=object)
+    return np.asarray(padded_sequences).astype('float32')
 
 
 def get_as_sequences(tokenizer, sentences, max_len_as, so):
@@ -88,7 +88,7 @@ def get_as_sequences(tokenizer, sentences, max_len_as, so):
         sequences.append(sequence)
 
     padded_sequences = pad_sequences(sequences, padding='post', maxlen=max_len_as)
-    return np.array(padded_sequences, dtype=object)
+    return np.asarray(padded_sequences).astype('float32')
 
 
 def create_as_index(file):
