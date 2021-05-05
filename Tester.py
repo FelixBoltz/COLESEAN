@@ -10,6 +10,8 @@ word_embedding = 'GloVe'
 sentic_net = 'concept_vector'
 # model type, possible values: 0 (concept vector model), 1 (polarity vector model) and 2 (polarity score model)
 model_type = 0
+# GloVe vectors location
+glove_path = 'glove.6B.300d.txt'
 # AffectiveSpace vectors location
 affectivespace_path = 'affectivespace.csv'
 
@@ -45,6 +47,12 @@ def main():
     x_train_we_pad = Preprocessing.get_we_sequences(tokenizer_we, sentences_train, max_len_we)
     x_val_we_pad = Preprocessing.get_we_sequences(tokenizer_we, sentences_val, max_len_we)
     x_test_we_pad = Preprocessing.get_we_sequences(tokenizer_we, sentences_test, max_len_we)
+    # set up embedding matrix for word embedding input
+    embedding_dim_we = 300
+    embedding_matrix_we = []
+    if word_embedding == 'GloVe':
+        embedding_matrix_we = Preprocessing.create_embedding_matrix_glove(glove_path,
+                                                                          tokenizer_we.word_index, embedding_dim_we)
     # prepare SenticNet related input depending on model
     so = Preprocessing.SearchObject()
     if model_type == 0:
@@ -62,10 +70,14 @@ def main():
         x_train_as_pad = Preprocessing.get_as_sequences(tokenizer_as, sentences_train, max_len_as, so)
         x_val_as_pad = Preprocessing.get_as_sequences(tokenizer_as, sentences_val, max_len_as, so)
         x_test_as_pad = Preprocessing.get_as_sequences(tokenizer_as, sentences_test, max_len_as, so)
+        # set up embedding matrix for concept vector input
+        embedding_dim_as = 100
+        embedding_matrix_as = []
+        embedding_matrix_as = \
+            Preprocessing.create_embedding_matrix_glove(affectivespace_path, tokenizer_as.word_index, embedding_dim_as)
     elif model_type == 1:
-        # sn = SenticNet()
-        # Preprocessing.create_sn_index(sn.data)
-        Preprocessing.create_as_index(affectivespace_path)
+        sn = SenticNet()
+        Preprocessing.create_sn_index(sn.data)
 
     return 0
 
