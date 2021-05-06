@@ -91,10 +91,25 @@ def get_as_sequences(tokenizer, sentences, max_len_as, so):
     return np.asarray(padded_sequences).astype('float32')
 
 
+def get_polarity_vectors(sentences, sn, so, max_len):
+    concept_sequence = []
+    for i in range(len(sentences)):
+        concepts = so.search(sentences[i])
+        concept_sequence.append(concepts)
+    polarity_vectors = []
+    for i in range(len(concept_sequence)):
+        comment_polarity = []
+        for j in range(len(concept_sequence[i])):
+            concept_polarity = get_polarity(concept_sequence[i][j], sn)
+            comment_polarity.append(concept_polarity)
+        polarity_vectors.append(comment_polarity)
+    padded_polarity_vectors = pad_sequences(polarity_vectors, padding='post', maxlen=max_len, dtype='float')
+    return np.asarray(padded_polarity_vectors).astype('float32')
+
+
 def get_polarity_scores(sentences, sn, so):
     concept_sequence = []
     for i in range(len(sentences)):
-        # for i in range(10000):
         concepts = so.search(sentences[i])
         concept_sequence.append(concepts)
     sequence_polarities = []

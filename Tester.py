@@ -102,6 +102,10 @@ def main():
         plot_history(history)
         plt.show()
         Regressor.print_test_performance(model, y_test, x_test_we_pad, x_test_as_pad)
+    elif model_type == 1:
+        sn = SenticNet()
+        Preprocessing.create_sn_index(sn.data)
+
     elif model_type == 2:
         sn = SenticNet()
         Preprocessing.create_sn_index(sn.data)
