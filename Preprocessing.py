@@ -111,8 +111,6 @@ def get_polarity(concept_list, sn):
             polarity_score += float(sn.polarity_value(concept_list[i]))
     except KeyError:
         {}
-    else:
-        print("Something else went wrong")
     return polarity_score
 
 

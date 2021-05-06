@@ -31,30 +31,27 @@ def concept_vector_model(max_len_we, max_len_as, vocab_size_we, vocab_size_as,
 
 def polarity_score_model(max_len_we, vocab_size_we, embedding_dim_we, embedding_matrix_we):
     tf.keras.backend.clear_session()
-
     we_input = tf.keras.Input(shape=(max_len_we,), name="we_sequence")
     polarity_input = tf.keras.Input(shape=(1,), name="comment_polarity")
-
     we_embedding_layer = layers.Embedding(vocab_size_we, embedding_dim_we, weights=[embedding_matrix_we],
                                           input_length=max_len_we, trainable=False)(we_input)
-
     we_bi_lstm = Bidirectional(LSTM(64))(we_embedding_layer)
-
     multiplication_layer = layers.Multiply()([polarity_input, we_bi_lstm])
-
     comb_dense = layers.Dense(10, activation='relu')(multiplication_layer)
-
     output = layers.Dense(1)(comb_dense)
-
     model = keras.Model(inputs=[we_input, polarity_input], outputs=[output], )
     return model
 
 
-def print_test_performance(model, y_test, x_test_we_pad, x_test_as_pad):
+def print_test_performance(model, y_test, x_test_primary, x_test_secondary):
     y_true = y_test
-    test_input = [x_test_we_pad, x_test_as_pad]
+    test_input = [x_test_primary, x_test_secondary]
     y_pred = model.predict(test_input)
     mae = tf.keras.losses.MeanAbsoluteError()
     print("Mean absolute error on test set: ", mae(y_true, y_pred).numpy())
     mse = tf.keras.losses.MeanSquaredError()
     print("Mean squared error on test set: ", mse(y_true, y_pred).numpy())
+
+
+def get_stop_conditions():
+    return EarlyStopping(monitor='val_loss', mode='min', min_delta=0.01, patience=3, verbose=1)

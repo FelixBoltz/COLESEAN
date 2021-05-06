@@ -10,7 +10,7 @@ from gensim.models import KeyedVectors
 # Word Embedding variable, possible values: 0 (Global Vectors), 1 (Word2Vec) and 2 (FastText)
 word_embedding_type = 0
 # model type, possible values: 0 (concept vector model), 1 (polarity vector model) and 2 (polarity score model)
-model_type = 0
+model_type = 2
 # GloVe vectors location
 glove_path = 'glove.6B.300d.txt'
 # FastText vectors location
@@ -87,7 +87,7 @@ def main():
         model.compile(optimizer='Adam', loss=loss_function, metrics=['mae', 'mse'])
         model.summary()
         # early stopping conditions
-        es = Regressor.EarlyStopping(monitor='val_loss', mode='min', min_delta=0.01, patience=3, verbose=1)
+        es = Regressor.get_stop_conditions()
         history = model.fit({"we_sequence": x_train_we_pad, "concept_sequence": x_train_as_pad}, y_train,
                             epochs=100,
                             verbose=1,
@@ -102,10 +102,32 @@ def main():
         plot_history(history)
         plt.show()
         Regressor.print_test_performance(model, y_test, x_test_we_pad, x_test_as_pad)
-    elif model_type == 1:
+    elif model_type == 2:
         sn = SenticNet()
         Preprocessing.create_sn_index(sn.data)
-
+        x_train_polarity = Preprocessing.get_polarity_scores(sentences_train, sn, so)
+        x_val_polarity = Preprocessing.get_polarity_scores(sentences_val, sn, so)
+        x_test_polarity = Preprocessing.get_polarity_scores(sentences_test, sn, so)
+        model = Regressor.polarity_score_model(max_len_we,
+                                               vocab_size_we, embedding_dim_we, embedding_matrix_we)
+        model.compile(optimizer='Adam', loss=loss_function, metrics=['mae', 'mse'])
+        model.summary()
+        # early stopping conditions
+        es = Regressor.get_stop_conditions()
+        history = model.fit({"we_sequence": x_train_we_pad, "comment_polarity": x_train_polarity}, y_train,
+                            epochs=100,
+                            verbose=1,
+                            validation_data=({"we_sequence": x_val_we_pad, "comment_polarity": x_val_polarity}, y_val),
+                            callbacks=[es],
+                            batch_size=64)
+        # training results
+        results = model.evaluate({"we_sequence": x_train_we_pad, "comment_polarity": x_train_polarity}, y_train,
+                                 verbose=1)
+        print("Training results: ", results)
+        # show training graph
+        plot_history(history)
+        plt.show()
+        Regressor.print_test_performance(model, y_test, x_test_we_pad, x_test_polarity)
     return 0
 
 
