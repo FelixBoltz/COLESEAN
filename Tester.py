@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from gensim.models import KeyedVectors
 
 # Word Embedding variable, possible values: 0 (Global Vectors), 1 (Word2Vec) and 2 (FastText)
-word_embedding_type = 1
+word_embedding_type = 0
 # model type, possible values: 0 (concept vector model), 1 (polarity vector model) and 2 (polarity score model)
 model_type = 0
 # GloVe vectors location

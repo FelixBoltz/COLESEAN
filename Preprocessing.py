@@ -91,6 +91,31 @@ def get_as_sequences(tokenizer, sentences, max_len_as, so):
     return np.asarray(padded_sequences).astype('float32')
 
 
+def get_polarity_scores(sentences, sn, so):
+    concept_sequence = []
+    for i in range(len(sentences)):
+        # for i in range(10000):
+        concepts = so.search(sentences[i])
+        concept_sequence.append(concepts)
+    sequence_polarities = []
+    for i in range(len(concept_sequence)):
+        comment_polarity = get_polarity(concept_sequence[i], sn)
+        sequence_polarities.append(comment_polarity)
+    return np.asarray(sequence_polarities).astype('float32')
+
+
+def get_polarity(concept_list, sn):
+    polarity_score = 0
+    try:
+        for i in range(len(concept_list)):
+            polarity_score += float(sn.polarity_value(concept_list[i]))
+    except KeyError:
+        {}
+    else:
+        print("Something else went wrong")
+    return polarity_score
+
+
 def create_as_index(file):
     token2concepts = {}
     with open(file, 'r') as f:
