@@ -105,18 +105,38 @@ def main():
     elif model_type == 1:
         sn = SenticNet()
         Preprocessing.create_sn_index(sn.data)
-
+        max_len = 50
+        x_train_polarity_pad = Preprocessing.get_polarity_vectors(sentences_train, sn, so, max_len)
+        x_val_polarity_pad = Preprocessing.get_polarity_vectors(sentences_val, sn, so, max_len)
+        x_test_polarity_pad = Preprocessing.get_polarity_vectors(sentences_test, sn, so, max_len)
+        model = Regressor.polarity_vector_model(max_len_we, vocab_size_we, embedding_dim_we, embedding_matrix_we)
+        model.compile(optimizer='Adam', loss=loss_function, metrics=['mae', 'mse'])
+        model.summary()
+        es = Regressor.get_stop_conditions()
+        history = model.fit({"we_sequence": x_train_we_pad, "comment_polarities": x_train_polarity_pad}, y_train,
+                            epochs=100,
+                            verbose=1,
+                            validation_data=(
+                            {"we_sequence": x_val_we_pad, "comment_polarities": x_val_polarity_pad}, y_val),
+                            callbacks=[es],
+                            batch_size=64)
+        # training results
+        results = model.evaluate({"we_sequence": x_train_we_pad, "comment_polarities": x_train_polarity_pad}, y_train,
+                                 verbose=1)
+        print("Training results: ", results)
+        # show training graph
+        plot_history(history)
+        plt.show()
+        Regressor.print_test_performance(model, y_test, x_test_we_pad, x_test_polarity_pad)
     elif model_type == 2:
         sn = SenticNet()
         Preprocessing.create_sn_index(sn.data)
         x_train_polarity = Preprocessing.get_polarity_scores(sentences_train, sn, so)
         x_val_polarity = Preprocessing.get_polarity_scores(sentences_val, sn, so)
         x_test_polarity = Preprocessing.get_polarity_scores(sentences_test, sn, so)
-        model = Regressor.polarity_score_model(max_len_we,
-                                               vocab_size_we, embedding_dim_we, embedding_matrix_we)
+        model = Regressor.polarity_score_model(max_len_we, vocab_size_we, embedding_dim_we, embedding_matrix_we)
         model.compile(optimizer='Adam', loss=loss_function, metrics=['mae', 'mse'])
         model.summary()
-        # early stopping conditions
         es = Regressor.get_stop_conditions()
         history = model.fit({"we_sequence": x_train_we_pad, "comment_polarity": x_train_polarity}, y_train,
                             epochs=100,
