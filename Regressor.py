@@ -8,7 +8,6 @@ from keras.callbacks import EarlyStopping
 def concept_vector_model(max_len_we, max_len_as, vocab_size_we, vocab_size_as,
                          embedding_dim_we, embedding_matrix_we,
                          embedding_dim_as, embedding_matrix_as):
-    # defining keras model
     tf.keras.backend.clear_session()
     we_input = keras.Input(shape=(max_len_we,), name="we_sequence")
     as_input = keras.Input(shape=(max_len_as,), name="concept_sequence")
@@ -23,11 +22,25 @@ def concept_vector_model(max_len_we, max_len_as, vocab_size_we, vocab_size_as,
     concat = layers.concatenate([we_dense, as_dense])
     extra_dense = layers.Dense(10, activation='relu')(concat)
     output = layers.Dense(1)(extra_dense)
-    model = keras.Model(inputs=[we_input, as_input], outputs=[output], )
+    model = keras.Model(inputs=[we_input, as_input], outputs=[output],)
     return model
 
 
-# def polarity_vector_model():
+def polarity_vector_model(max_len_we, vocab_size_we, embedding_dim_we, embedding_matrix_we):
+    tf.keras.backend.clear_session()
+    we_input = keras.Input(shape=(max_len_we,), name="we_sequence")
+    polarity_input = keras.Input(shape=(50,), name="comment_polarities")
+    we_embedding_layer = layers.Embedding(vocab_size_we, embedding_dim_we, weights=[embedding_matrix_we],
+                                          input_length=max_len_we, trainable=False)(we_input)
+    we_bi_lstm = Bidirectional(LSTM(64))(we_embedding_layer)
+    we_dense = layers.Dense(10, activation='relu')(we_bi_lstm)
+    pol_dense = layers.Dense(10, activation='relu')(polarity_input)
+    concat = layers.concatenate([we_dense, pol_dense])
+    comb_dense = layers.Dense(10, activation='relu')(concat)
+    output = layers.Dense(1)(comb_dense)
+    model = keras.Model(inputs=[we_input, polarity_input], outputs=[output],)
+    return model
+
 
 def polarity_score_model(max_len_we, vocab_size_we, embedding_dim_we, embedding_matrix_we):
     tf.keras.backend.clear_session()
