@@ -10,13 +10,13 @@ from gensim.models import KeyedVectors
 # Word Embedding variable, possible values: 0 (Global Vectors), 1 (Word2Vec) and 2 (FastText)
 word_embedding_type = 0
 # model type, possible values: 0 (concept vector model), 1 (polarity vector model) and 2 (polarity score model)
-model_type = 2
+model_type = 0
 # GloVe vectors location
 glove_path = 'glove.6B.300d.txt'
-# FastText vectors location
-fasttext_path = 'crawl-300d-2M.vec'
 # Word2vec vectors location
 word2vec_path = 'GoogleNews-vectors-negative300.bin.gz'
+# FastText vectors location
+fasttext_path = 'crawl-300d-2M.vec'
 # AffectiveSpace vectors location
 affectivespace_path = 'affectivespace.csv'
 # loss function: either mse or mae
@@ -152,7 +152,6 @@ def main():
         plot_history(history)
         plt.show()
         Regressor.print_test_performance(model, y_test, x_test_we_pad, x_test_polarity)
-    return 0
 
 
 def plot_history(history):
