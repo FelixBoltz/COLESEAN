@@ -61,9 +61,9 @@ def main():
     embedding_dim_we = 300
     embedding_matrix_we = get_embedding_matrix_we(word_embedding_type, tokenizer_we, embedding_dim_we)
     # prepare SenticNet related input depending on model
-    so = Preprocessing.SearchObject()
     if model_type == 0:
         Preprocessing.create_as_index(affectivespace_path)
+        so = Preprocessing.SearchObject()
         affectivespace = pd.read_csv(affectivespace_path, header=None, keep_default_na=False)
         tokenizer_as = Tokenizer()
         for i in range(len(affectivespace.index)):
@@ -105,6 +105,7 @@ def main():
     elif model_type == 1:
         sn = SenticNet()
         Preprocessing.create_sn_index(sn.data)
+        so = Preprocessing.SearchObject()
         max_len = 50
         x_train_polarity_pad = Preprocessing.get_polarity_vectors(sentences_train, sn, so, max_len)
         x_val_polarity_pad = Preprocessing.get_polarity_vectors(sentences_val, sn, so, max_len)
@@ -131,6 +132,7 @@ def main():
     elif model_type == 2:
         sn = SenticNet()
         Preprocessing.create_sn_index(sn.data)
+        so = Preprocessing.SearchObject()
         x_train_polarity = Preprocessing.get_polarity_scores(sentences_train, sn, so)
         x_val_polarity = Preprocessing.get_polarity_scores(sentences_val, sn, so)
         x_test_polarity = Preprocessing.get_polarity_scores(sentences_test, sn, so)
