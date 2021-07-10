@@ -1,6 +1,6 @@
 # Concept-level Sentiment Analysis with SenticNet and Word Embeddings
 
-This repository is the result of a master thesis on "Concept-level Sentiment Analysis with SenticNet and Word Embeddings", making it available for reference or replication of the thesis' results.
+This repository is the result of a master thesis on "Concept-level Sentiment Analysis with SenticNet and Word Embeddings" (see pdf-file), making it available for reference or replication of the thesis' results.
 
 The code in this repository can be used to analyse the sentiments expressed in short comments by predicting an associated rating.
 
@@ -19,6 +19,13 @@ Clone this repository:
 $ git clone https://github.com/FelixBoltz/COLESEAN.git
 ```
 
+Install the latest version of the Package Manager pip:
+
+```
+$ sudo apt-get install pip
+$ python3 -m pip install --upgrade pip
+```
+
 Install the required packages:
 
 ```
@@ -28,6 +35,9 @@ $ pip install -r COLESEAN/requirements.txt
 ## Usage
 
 The file containing the comments and their respective ratings should be a comma-separated csv file in the same directory, with the comments in the first column and their ratings in the second one. The default file name is "comments_with_ratings" and can be adjusted in the 'Preprocessing.py' file if necessary.
+
+The comments and ratings data base used in this thesis can be found under:
+https://drive.google.com/file/d/1POd78-jmL6MDthpKKOHpvbmTelzffnGm/view?usp=sharing
 
 The pretrained word vectors for at least one of the Word Embeddings utilized in this work need to be downloaded and saved in the same directory first.
 You can choose between Global Vectors (GloVe), Word2Vec and Fasttext or download more than one for comparison.
@@ -72,4 +82,4 @@ Running 'Tester.py' will now train the selected model type on the input data, pl
 
 ## Contributing
 
-For questions or feedback, you can contact ?
+For questions or feedback, you can contact ucdhl@student.kit.edu
